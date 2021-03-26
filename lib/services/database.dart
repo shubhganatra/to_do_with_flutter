@@ -75,16 +75,14 @@ class Database {
     }
   }
 
-  Future<void> editTodo({String uid, String todoId, String content}) async {
+  Future<void> deleteTodo({String uid, String todoId}) async {
     try {
       firestore
           .collection("users")
           .doc(uid)
           .collection("todos")
           .doc(todoId)
-          .update({
-        "content": content,
-      });
+          .delete();
     } catch (e) {
       rethrow;
     }

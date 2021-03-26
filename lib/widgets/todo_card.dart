@@ -7,15 +7,23 @@ class TodoCard extends StatefulWidget {
   final TodoModel todo;
   final FirebaseFirestore firestore;
   final String uid;
-
-  const TodoCard({Key key, this.todo, this.firestore, this.uid})
+  final TextEditingController textEditingController;
+  const TodoCard(
+      {Key key,
+      this.todo,
+      this.firestore,
+      this.uid,
+      this.textEditingController})
       : super(key: key);
 
   @override
-  _TodoCardState createState() => _TodoCardState();
+  _TodoCardState createState() => _TodoCardState(textEditingController);
 }
 
 class _TodoCardState extends State<TodoCard> {
+  final TextEditingController textEditingController;
+
+  _TodoCardState(this.textEditingController);
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -25,14 +33,13 @@ class _TodoCardState extends State<TodoCard> {
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                widget.todo.content,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
+                child: Text(
+              widget.todo.content,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
-            ),
+            )),
             Checkbox(
               value: widget.todo.done,
               onChanged: (newValue) {
@@ -44,6 +51,16 @@ class _TodoCardState extends State<TodoCard> {
                 );
               },
             ),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    Database(firestore: widget.firestore).deleteTodo(
+                      uid: widget.uid,
+                      todoId: widget.todo.todoId,
+                    );
+                  });
+                },
+                icon: const Icon(Icons.delete)),
           ],
         ),
       ),
